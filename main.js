@@ -1,32 +1,37 @@
-document.getElementById('btnCalcular').addEventListener('click', () => {
+// Espera a que cargue el DOM
+document.addEventListener('DOMContentLoaded', () => {
 
-    const nombre = document.getElementById('nombre').value;
-    const unidad1 = document.getElementById('unidad1').value;
-    const unidad2 = document.getElementById('unidad2').value;
-    const unidad3 = document.getElementById('unidad3').value;
+    const btn = document.getElementById('btnCalcular');
 
-    if (!nombre || !unidad1 || !unidad2 || !unidad3) {
-        alert('Por favor completa todos los campos');
-        return;
-    }
+    btn.addEventListener('click', () => {
 
-    fetch('/calcular-promedio', {
-        method: 'POST',
-        headers: { 
-            'Content-Type': 'application/json' 
-        },
-        body: JSON.stringify({
-            nombre,
-            unidad1,
-            unidad2,
-            unidad3
-        })
-    })
-    .then(res => res.json())
-    .then(data => {
-        document.getElementById('promedio').value = data.promedio.toFixed(2);
-        document.getElementById('estatus').value = data.estatus;
-    })
-    .catch(err => console.error('Error:', err));
+        // Obtener valores
+        const nombre = document.getElementById('nombre').value.trim();
+        const unidad1 = parseFloat(document.getElementById('unidad1').value);
+        const unidad2 = parseFloat(document.getElementById('unidad2').value);
+        const unidad3 = parseFloat(document.getElementById('unidad3').value);
+
+        // Validación
+        if (!nombre || isNaN(unidad1) || isNaN(unidad2) || isNaN(unidad3)) {
+            alert('Por favor completa todos los campos correctamente');
+            return;
+        }
+
+        // Calcular promedio (sin servidor)
+        const promedio = (unidad1 + unidad2 + unidad3) / 3;
+
+        // Determinar estatus
+        let estatus = '';
+        if (promedio >= 6) {
+            estatus = 'Aprobado';
+        } else {
+            estatus = 'Reprobado';
+        }
+
+        // Mostrar resultados en los inputs
+        document.getElementById('promedio').value = promedio.toFixed(2);
+        document.getElementById('estatus').value = estatus;
+
+    });
 
 });
